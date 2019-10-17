@@ -1,6 +1,6 @@
 package com.royforthewin.moviecatalogservice.resources;
 
-        import com.royforthewin.moviecatalogservice.model.CatalogItem;
+        import com.royforthewin.moviecatalogservice.models.CatalogItem;
         import org.springframework.web.bind.annotation.PathVariable;
         import org.springframework.web.bind.annotation.RequestMapping;
         import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package com.royforthewin.moviecatalogservice.model;
+package com.royforthewin.moviecatalogservice.models;
 
 import lombok.Data;
 
