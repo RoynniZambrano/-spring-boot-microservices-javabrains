@@ -3,6 +3,7 @@ package com.royforthewin.moviecatalogservice.resources;
 import com.royforthewin.moviecatalogservice.models.CatalogItem;
 import com.royforthewin.moviecatalogservice.models.Movie;
 import com.royforthewin.moviecatalogservice.models.Rating;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +18,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/catalog")
 public class MovieCatalogResource {
 
+    @Autowired
+    RestTemplate restTemplate;
+
     @RequestMapping("/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId) {
-        RestTemplate restTemplate = new RestTemplate();
-        // Movie movie restTemplate.getForObject("http://localhost:8083/ratingsdata/1",Movie.class);
 
         List<Rating> ratings = Arrays.asList(
                 new Rating("1234", 4),
