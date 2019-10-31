@@ -32,22 +32,40 @@ public class MovieCatalogResource {
     WebClient.Builder webClientBuilder;
 
     @RequestMapping("/{userId}")
-    @HystrixCommand(fallbackMethod = "getFallbackCatalog")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId) {
 
-        UserRating ratings = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
+        UserRating ratings = getUserRating(userId);
         return ratings.getUserRating().stream().map(rating -> {
-            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
-            return new CatalogItem(movie.getName(), movie.getName(), rating.getRating());
+            return getCatalogItem(rating);
         }).collect(Collectors.toList());
-
-    }
-
-    public List<CatalogItem> getFallbackCatalog(@PathVariable("userId") String userId) {
-        return Arrays.asList(new CatalogItem("no movie","",0));
     }
 
 
+    @HystrixCommand(fallbackMethod = "getFallbackCUserRating")
+    private UserRating getUserRating(@PathVariable("userId") String userId) {
+        return restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
+    }
+
+
+    public UserRating getFallbackCUserRating(@PathVariable("userId") String userId) {
+        UserRating userRating = new UserRating();
+        userRating.setUserId(userId);
+        userRating.setUserRating(
+                Arrays.asList( new Rating("0",0)) );
+        return userRating;
+    }
+
+
+    @HystrixCommand(fallbackMethod = "getFallbackCatalogItem")
+    private CatalogItem getCatalogItem(Rating rating) {
+        Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
+        return new CatalogItem(movie.getName(), movie.getName(), rating.getRating());
+    }
+
+
+    public CatalogItem getFallbackCatalogItem(Rating rating) {
+        return new CatalogItem("Moview name not found","", rating.getRating());
+    }
 }
 
            /*
